@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>彩虹糖</title>
+	<style>
+		*{
+			margin:0;
+			padding: 0;
+			overflow: auto;
+		}
+	</style>
+</head>
+<body>
+	<canvas id="bubble">
+		
+	</canvas>
+</body>
+<script>
+	var bubble = document.getElementById('bubble');  //获取canvas
+	var canCon = bubble.getContext("2d");
+	var a_color = ["#c7ffec","#376956","#f17c67","#c3b1d4","#495a80"]; //定制彩虹糖颜色
+	var bub_arr = [] //存储生成的彩虹糖
+	var window_w;
+	var window_h;
+	window.onload=function(){
+		(function setSize() { //设置canvas的宽高
+			window_w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth; //浏览器宽
+			window_h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;//浏览器高
+	    	window.onresize = arguments.callee;
+	    	bubble.width = window_w;
+	    	bubble.height = window_h;
+	    })();
+	    creat(888); //产生888个彩虹糖
+	    setInterval(function(){
+	    	canCon.clearRect(0,0,window_w,window_h);
+	    	for(item of bub_arr){
+	    		item.move();
+	    	}
+	    },1/100)
+	}
+	function my_random(min,max){  // 产生从min到max的随机小数
+		return Math.random()*(max-min)+min;
+	}
+	function Bubble(){ //彩虹糖的构造函数
+
+	};
+	Bubble.prototype = {
+		init:function(){
+			this.x = my_random(0,window_w);
+			this.y = my_random(0,window_h);
+			this.r = my_random(1,3);
+			this.color = a_color[Math.floor(my_random(0,4))];
+			this.vx = my_random(-1,1);
+			this.vy = my_random(-1,1);
+			bub_arr.push(this);
+		},
+		draw:function(){
+			canCon.beginPath();
+	    	canCon.fillStyle = this.color;
+	    	canCon.arc(this.x,this.y,this.r,0,Math.PI*2);
+	    	canCon.fill();
+		},
+		move:function(){
+			this.x += this.vx;
+			this.y += this.vy;
+			if(this.x-this.r<0 || this.x+this.r>window_w){
+				this.vx = -this.vx;
+			}
+			if(this.y-this.r<0 || this.y+this.r>window_h){
+				this.vy = -this.vy;
+			}
+			this.draw();
+		}
+	}
+	function creat(num){ //生成彩虹糖
+		for (var i = 0; i < num; i++) {
+			var bub = new Bubble();
+			bub.init();
+			bub.draw();
+		}
+	}
+</script>
+</html>

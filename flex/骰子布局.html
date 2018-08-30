@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		body{
+			background: pink;
+		}
+		#warp{
+			display: inline-flex;
+			flex-wrap: wrap;
+			justify-content: space-between;
+			width: 100%;
+			color: white;
+		}
+		.background{
+			width: 90px;
+			height: 90px;
+			background: #eee;
+			border-width: 8px;
+			border-style: solid;
+			border-color: #ddd #ccc #bbb;
+			border-radius: 8px;
+			display: inline-flex;
+			padding: 5px;
+/*			vertical-align:bottom;  //基线对齐
+*/		}
+		.box{
+			width: 20px;
+			height: 20px;
+			border-radius: 20px;
+			background: #333;
+			box-shadow: 0 -3px 0 #666 inset;
+			text-align: center;
+			line-height: 20px;
+		}
+		/*1*/
+		.background1{
+			justify-content: center;
+			align-items: center;
+		}
+		/*2*/
+		.background2{
+			flex-direction: column;
+			justify-content: space-between;
+			align-items: center;
+		}
+		/*3*/
+		.background3{
+			flex-direction: row-reverse;
+			justify-content: space-between;
+		}
+		.box32{
+			align-self: center;
+		}
+		.box33{
+			align-self: flex-end;
+		}
+		/*4*/
+		.background4{
+			flex-wrap: wrap;
+			align-content: space-between;
+		}
+		.box4{
+			flex-basis: 100%;
+			display: flex;
+			justify-content: space-between;
+		}
+		/*5*/
+		.background5{
+			flex-wrap: wrap;
+			align-content: space-between;
+		}
+		.box5{
+			flex-basis: 100%;
+			display: flex;
+			justify-content: space-between;
+		}
+		.box5:nth-child(2){
+			justify-content: center;
+		}
+	</style>
+</head>
+<body>
+	<div id="warp">
+		<div class="background background1">
+			<div class="box box1">1</div>
+		</div>
+		<div class="background background2">
+			<div class="box box21">1</div>
+			<div class="box box22">2</div>
+		</div>
+		<div class="background background3">
+			<div class="box box31">1</div>
+			<div class="box box32">2</div>
+			<div class="box box33">3</div>
+		</div>
+		<div class="background background4">
+			<div class="box4">
+				<div class="box box411">1</div>
+				<div class="box box412">2</div>
+			</div>
+			<div class="box4">
+				<div class="box box421">3</div>
+				<div class="box box422">4</div>
+			</div>
+		</div>
+		<div class="background background5">
+			<div class="box5">
+				<div class="box box511">1</div>
+				<div class="box box512">2</div>
+			</div>
+			<div class="box5">
+				<div class="box box521">3</div>
+			</div>
+			<div class="box5">
+				<div class="box box531">4</div>
+				<div class="box box532">5</div>
+			</div>
+		</div>
+		<div class="background background4">
+			<div class="box4">
+				<div class="box box611">1</div>
+				<div class="box box612">2</div>
+			</div>
+			<div class="box4">
+				<div class="box box621">3</div>
+				<div class="box box621">4</div>
+			</div>
+			<div class="box4">
+				<div class="box box631">5</div>
+				<div class="box box632">6</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

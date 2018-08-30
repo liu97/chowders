@@ -1,0 +1,78 @@
+body,html{
+		width: 100%;
+		background: #f1f1f3;
+	}
+.row1{
+		background: #c50c0c;
+	}
+.navbar{
+		margin-bottom: 5px;
+	}
+.divhuandengpian{
+		background: url(../images/bghuandengpian.jpg);
+		background-size: cover;
+	}
+.row2{
+		background: #f5f5f5;
+	}
+.divremen{
+	padding-top: 10px;
+	border-bottom: 2px solid #c50c0c;
+	height: 50px;
+}
+.glyphicon{
+	color: #c10d0c;
+}
+.row3left{
+	background: white;
+	border: 1px solid #ccc;
+}
+.rementupian{
+	margin-top: 20px;
+}
+.rementupian>img{
+	width: 100%;
+	border: 1px solid #ccc;
+}
+.rementupian>p{
+	padding-top:5px;
+}
+.banquan{
+	padding:100px 45%;
+}
+.row4{
+	border-top: 1px solid #ccc;
+}
+@media (min-width: 768px){
+	.huandengpian2>img{
+		height: 100%;
+	}
+	.remen{
+		font-size: 20px;
+		font-weight: bold;
+	}
+	
+}/*当屏幕大于768px时*/
+@media (min-width: 1068px){
+	.nav,.navbar-brand{
+		padding-left: 200px;
+	}
+	.huandengpian{
+		width:100%;
+	}
+}
+@media (max-width: 1268px){
+		.huandengpian2{
+		display: none;
+	}
+}
+@media (max-width: 768px){
+	.huandengpian{
+		width:100%;
+	}
+	.remen{
+		font-size: 12px;
+		font-weight: bold;
+	}
+	
+}/*当屏幕小于768px时*/
