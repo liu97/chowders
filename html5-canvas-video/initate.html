@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+	<title>Document</title>
+	<style>
+		body,html,video,canvas{
+			padding: 0;
+			margin: 0;
+		}
+		body,html{
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+		}
+		#video1{
+			width: 100%;
+			height: 100%;
+			object-fit: fill;
+			display: none;
+		}
+	</style>
+</head>
+<body>
+	<video src="BigBuckBunny_640x360.mp4" id="video1" autoplay muted></video>
+	<canvas id="canvas1"></canvas>
+	<script>
+
+		var video1 = document.getElementById('video1');
+		var canvas1 = document.getElementById('canvas1');
+		var window_w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth; //浏览器宽
+		var window_h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;//浏览器高
+
+		var video_canvas = {
+			cards: [],
+			slice_number: 10,
+		};
+		(function() { //设置canvas的宽高
+	    	canvas1.width = window_w;
+	    	canvas1.height = window_h;
+	    	for(var i = 0; i < video_canvas.slice_number; i++){
+	    		for(var j = 0; j < video_canvas.slice_number; j++){
+	    			var card = {
+	    				wd: window_w / video_canvas.slice_number,
+	    				hg: window_h / video_canvas.slice_number,
+	    				last_x: window_w / video_canvas.slice_number * (i+1),
+	    				last_y: window_h / video_canvas.slice_number * (j+1)
+	    			}
+	    			video_canvas.cards.push(card);
+	    		}
+	    	}
+	    })();
+
+	</script>
+</body>
+</html>
