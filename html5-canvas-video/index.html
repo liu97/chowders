@@ -50,7 +50,6 @@ function createTiles(){
 var RAD = Math.PI/180;
 var randomJump = false;
 var tiles = [];
-var debug = false;
 function processFrame(){
 	if(!isNaN(video.duration)){
 		if(SOURCERECT.width == 0){
@@ -67,7 +66,6 @@ function processFrame(){
 			video.currentTime = 0;
 		}
 	}
-	var debugStr = "";
 	//copy tiles
 	copy.drawImage(video, 0, 0);
 	draw.clearRect(PAINTRECT.x, PAINTRECT.y,PAINTRECT.width,PAINTRECT.height);
@@ -120,10 +118,6 @@ function processFrame(){
 		draw.drawImage(copycanvas, tile.videoX, tile.videoY, TILE_WIDTH, TILE_HEIGHT, -TILE_CENTER_WIDTH, -TILE_CENTER_HEIGHT, TILE_WIDTH, TILE_HEIGHT);
 		draw.restore();
 	}
-	if(debug){
-		debug = false;
-		document.getElementById('trace').innerHTML = debugStr;
-	}
 }
 
 function explode(x, y){
@@ -134,7 +128,7 @@ function explode(x, y){
 		var ydiff = tile.currentY-y;
 		var dist = Math.sqrt(xdiff*xdiff + ydiff*ydiff);
 		
-		var randRange = 220+(Math.random()*30);
+		var randRange = 220;
 		var range = randRange-dist;
 		var force = 3*(range/randRange);
 		if(force > tile.force){
@@ -226,36 +220,12 @@ function copyPixel(sImageData, sx, sy, dImageData, dx, dy){
     
 	<div>
 		<video id="sourcevid" autoplay="true" loop="true">
-			<source src="BigBuckBunny_640x360.mp4" type="video/mp4"/>
-			<source src="BigBuckBunny_640x360.ogv" type="video/ogg"/>
+			<source src="https://www.html5tricks.com/demo/html5-canvas-video/BigBuckBunny_640x360.mp4" type="video/mp4"/>
 		</video>
 		<canvas id="sourcecopy" width="640" height="360"></canvas>
 	</div>
-	<div><center>
-		<div style="z-index:1;position:relative;text-align:center;font-size:16px;font-weight:bold;width:1000px;top:60px;">Click video to blow it up!</div>
-		<canvas id="output" width="1000" height="600" onmousedown="dropBomb(event, this)" style="border: 0 none"></canvas></center>
+	<div>		
+		<canvas id="output" width="1000" height="600" onmousedown="dropBomb(event, this)" style="border: 0 none"></canvas>
 	</div>
-<script src="/gg_bd_ad_720x90.js" type="text/javascript"></script>
-	 <script src="/follow.js" type="text/javascript"></script>
-	<div style="width:700px;margin:10px auto 20px auto;padding:0 0 0 380px;overflow:hidden">
-<!-- Baidu Button BEGIN -->
-    <div id="bdshare" class="bdshare_t bds_tools_32 get-codes-bdshare" style="margin:10px 0 0 -4px">
-        <a class="bds_tsina"></a>
-        <a class="bds_tqq"></a>
-        <a class="bds_renren"></a>
-        <a class="bds_qzone"></a>
-        <a class="bds_douban"></a>
-        <a class="bds_xg"></a>
-        <span class="bds_more">¸ü¶à</span>
-		<a class="shareCount"></a>
-    </div>
-<script type="text/javascript" id="bdshare_js" data="type=tools" ></script>
-<script type="text/javascript" id="bdshell_js"></script>
-<script type="text/javascript">
-	document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + new Date().getHours
-();
-</script>
-<!-- Baidu Button END -->
-</div>
 </body>
 </html>

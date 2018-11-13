@@ -14,44 +14,127 @@
 			height: 100%;
 			overflow: hidden;
 		}
+		#hidden-container{
+			width: 100%;
+			height: 100%;
+			/*display: none;*/
+			visibility: hidden;
+		}
 		#video1{
 			width: 100%;
 			height: 100%;
 			object-fit: fill;
-			display: none;
+		}
+		canvas{
+			position: absolute;
+			top: 0;
+			left: 0;
 		}
 	</style>
 </head>
 <body>
-	<video src="BigBuckBunny_640x360.mp4" id="video1" autoplay muted></video>
+	<div id="hidden-container">
+		<video src="https://www.html5tricks.com/demo/html5-canvas-video/BigBuckBunny_640x360.mp4" id="video1" autoplay muted></video>
+		<canvas id="canvas2"></canvas>
+	</div>
 	<canvas id="canvas1"></canvas>
 	<script>
 
 		var video1 = document.getElementById('video1');
 		var canvas1 = document.getElementById('canvas1');
+		var canvas2 = document.getElementById('canvas2');
+		var context = canvas1.getContext("2d");
+		var copy_context = canvas2.getContext("2d");
 		var window_w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth; //浏览器宽
 		var window_h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;//浏览器高
 
 		var video_canvas = {
 			cards: [],
-			slice_number: 10,
+			slice_number: 20,
 		};
 		(function() { //设置canvas的宽高
-	    	canvas1.width = window_w;
-	    	canvas1.height = window_h;
+	    	canvas1.width = canvas2.width = window_w;
+	    	canvas1.height = canvas2.height = window_h;
 	    	for(var i = 0; i < video_canvas.slice_number; i++){
 	    		for(var j = 0; j < video_canvas.slice_number; j++){
 	    			var card = {
 	    				wd: window_w / video_canvas.slice_number,
 	    				hg: window_h / video_canvas.slice_number,
-	    				last_x: window_w / video_canvas.slice_number * (i+1),
-	    				last_y: window_h / video_canvas.slice_number * (j+1)
+	    				s_first_x: window_w / video_canvas.slice_number * (i),
+	    				s_first_y: window_h / video_canvas.slice_number * (j),
+	    				d_first_x: window_w / video_canvas.slice_number * (i),
+	    				d_first_y: window_h / video_canvas.slice_number * (j),
+	    				vx: window_w / 2 - window_w / video_canvas.slice_number * (i) - window_w / video_canvas.slice_number /2,
+	    				vy: window_h / 2 - window_h / video_canvas.slice_number * (j) - window_h / video_canvas.slice_number / 2,
+
+
 	    			}
 	    			video_canvas.cards.push(card);
 	    		}
 	    	}
 	    })();
+	    (function setRAF(addition) {
+    	    var lastTime = 0;
+    	    var vendors = ['webkit', 'moz'];
+    	    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+    	        window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
+    	        window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] ||
+    	                                      window[vendors[x] + 'CancelRequestAnimationFrame'];
+    	    }
 
+    	    if (!window.requestAnimationFrame || addition) {
+    	        window.requestAnimationFrame = function(callback, element) { //兼容不支持requestAnimationFrame的情况
+    	            var currTime = new Date().getTime();
+    	            var timeToCall = Math.max(0, 16.7 - (currTime - lastTime));
+    	            var id = window.setTimeout(function() {
+    	                callback(currTime + timeToCall);
+    	            }, timeToCall);
+    	            lastTime = currTime + timeToCall;
+    	            return id;
+    	        };
+    	    }
+    	    if (!window.cancelAnimationFrame || addition) {
+    	        window.cancelAnimationFrame = function(id) {
+    	            clearTimeout(id);
+    	        };
+    	    }
+    	})();
+    	function drawCanvas(){
+    		if(video1.currentTime >= 5){
+    			canvasMove();
+    		}
+
+    		copy_context.drawImage(video1, 0, 0, canvas2.width, canvas2.height);
+    		context.clearRect(0, 0, canvas1.width, canvas1.height)
+    		for (var i = 0; i < video_canvas.cards.length; i++) {
+    			var s_first_x = video_canvas.cards[i].s_first_x;
+    			var s_first_y = video_canvas.cards[i].s_first_y;
+    			var d_first_x = video_canvas.cards[i].d_first_x;
+    			var d_first_y = video_canvas.cards[i].d_first_y;
+    			var s_wd = video_canvas.cards[i].wd;
+    			var s_hg = video_canvas.cards[i].hg;
+    			context.drawImage(canvas2, s_first_x, s_first_y, s_wd, s_hg, d_first_x, d_first_y, s_wd, s_hg);
+
+    		}
+    		if(!video1.paused){
+		    	requestAnimationFrame(drawCanvas)
+		    }
+    	}
+    	function canvasMove(){
+    		for (var i = 0; i < video_canvas.cards.length; i++) {
+    			var radians = Math.atan2(video_canvas.cards[i].vy, video_canvas.cards[i].vx);
+    			var dist = Math.sqrt(video_canvas.cards[i].vx*video_canvas.cards[i].vx + video_canvas.cards[i].vy*video_canvas.cards[i].vy);
+    			if(Math.cos(radians) < 0){
+    				dist = -dist;
+    			}
+    			dist = 200/dist
+    			video_canvas.cards[i].d_first_x -= (dist + Math.cos(radians)) * 10;
+    			video_canvas.cards[i].d_first_y -= (dist + Math.sin(radians)) * 10;
+    		}
+    	}
+    	video1.addEventListener("play", function(){
+    		drawCanvas();
+    	})
 	</script>
 </body>
 </html>
