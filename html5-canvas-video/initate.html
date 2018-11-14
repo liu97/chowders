@@ -20,7 +20,7 @@
 			/*display: none;*/
 			visibility: hidden;
 		}
-		#video1{
+		#enter_video{
 			width: 100%;
 			height: 100%;
 			object-fit: fill;
@@ -34,17 +34,17 @@
 </head>
 <body>
 	<div id="hidden-container">
-		<video src="https://www.html5tricks.com/demo/html5-canvas-video/BigBuckBunny_640x360.mp4" id="video1" autoplay muted></video>
-		<canvas id="canvas2"></canvas>
+		<video src="https://www.html5tricks.com/demo/html5-canvas-video/BigBuckBunny_640x360.mp4" id="enter_video" autoplay muted></video>
+		<canvas id="copy_canvas"></canvas>
 	</div>
-	<canvas id="canvas1"></canvas>
+	<canvas id="display_canvas"></canvas>
 	<script>
 
-		var video1 = document.getElementById('video1');
-		var canvas1 = document.getElementById('canvas1');
-		var canvas2 = document.getElementById('canvas2');
-		var context = canvas1.getContext("2d");
-		var copy_context = canvas2.getContext("2d");
+		var enter_video = document.getElementById('enter_video');
+		var display_canvas = document.getElementById('display_canvas');
+		var copy_canvas = document.getElementById('copy_canvas');
+		var context = display_canvas.getContext("2d");
+		var copy_context = copy_canvas.getContext("2d");
 		var window_w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth; //浏览器宽
 		var window_h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;//浏览器高
 
@@ -52,11 +52,37 @@
 			cards: [],
 			slice_number: 20,
 		};
-		(function() { //设置canvas的宽高
-	    	canvas1.width = canvas2.width = window_w;
-	    	canvas1.height = canvas2.height = window_h;
-	    	for(var i = 0; i < video_canvas.slice_number; i++){
+		function Canvas_tile(){
+			this.wd = 0; // 卡片宽度
+			this.hg = 0; // 卡片高度
+			this.sx = 0; // 相对图像x坐标
+			this.sy = 0; // 相对图像y坐标
+			this.x = 0; // 卡片左上相对画笔原点x坐标位置
+			this.y = 0; // 卡片左上相对画笔原点y坐标位置
+			this.currentx = 0; // 卡片中心点x坐标
+			this.currenty = 0; // 卡片中心点y坐标
+			this.movex = 0; // 卡片在x轴每次移动距离
+			this.movey = 0; // 卡片在y轴每次移动距离
+		}
+		function init(){
+			display_canvas.width = copy_canvas.width = window_w;
+			display_canvas.height = copy_canvas.height = window_h;
+			for(var i = 0; i < video_canvas.slice_number; i++){
 	    		for(var j = 0; j < video_canvas.slice_number; j++){
+	    			var tile = new Canvas_tile();
+	    			tile.wd = display_canvas.width / video_canvas.slice_number;
+	    			tile.hg = display_canvas.height / video_canvas.slice_number;
+	    			tile.sx = tile.wd * i;
+	    			tile.sy = tile.hg * j;
+	    			tile.x = -tile.wd / 2;
+	    			tile.y = tile.hg / 2;
+	    			tile.currentx = tile.sx - tile.wd / 2;
+	    			tile.currenty = tile.sy - tile.hg / 2;
+	    		}
+	    	}
+		}
+		(function() { //设置canvas的宽高
+	    	
 	    			var card = {
 	    				wd: window_w / video_canvas.slice_number,
 	    				hg: window_h / video_canvas.slice_number,
@@ -100,12 +126,12 @@
     	    }
     	})();
     	function drawCanvas(){
-    		if(video1.currentTime >= 5){
+    		if(enter_video.currentTime >= 5){
     			canvasMove();
     		}
 
-    		copy_context.drawImage(video1, 0, 0, canvas2.width, canvas2.height);
-    		context.clearRect(0, 0, canvas1.width, canvas1.height)
+    		copy_context.drawImage(enter_video, 0, 0, copy_canvas.width, copy_canvas.height);
+    		context.clearRect(0, 0, display_canvas.width, display_canvas.height)
     		for (var i = 0; i < video_canvas.cards.length; i++) {
     			var s_first_x = video_canvas.cards[i].s_first_x;
     			var s_first_y = video_canvas.cards[i].s_first_y;
@@ -113,10 +139,10 @@
     			var d_first_y = video_canvas.cards[i].d_first_y;
     			var s_wd = video_canvas.cards[i].wd;
     			var s_hg = video_canvas.cards[i].hg;
-    			context.drawImage(canvas2, s_first_x, s_first_y, s_wd, s_hg, d_first_x, d_first_y, s_wd, s_hg);
+    			context.drawImage(copy_canvas, s_first_x, s_first_y, s_wd, s_hg, d_first_x, d_first_y, s_wd, s_hg);
 
     		}
-    		if(!video1.paused){
+    		if(!enter_video.paused){
 		    	requestAnimationFrame(drawCanvas)
 		    }
     	}
@@ -132,7 +158,7 @@
     			video_canvas.cards[i].d_first_y -= (dist + Math.sin(radians)) * 10;
     		}
     	}
-    	video1.addEventListener("play", function(){
+    	enter_video.addEventListener("play", function(){
     		drawCanvas();
     	})
 	</script>

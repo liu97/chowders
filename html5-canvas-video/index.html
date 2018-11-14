@@ -48,18 +48,12 @@ function createTiles(){
 }
 
 var RAD = Math.PI/180;
-var randomJump = false;
 var tiles = [];
 function processFrame(){
 	if(!isNaN(video.duration)){
 		if(SOURCERECT.width == 0){
 			SOURCERECT = {x:0,y:0,width:video.videoWidth,height:video.videoHeight};
 			createTiles();
-		}
-		//this is to keep my sanity while developing
-		if(randomJump){
-			randomJump = false;
-			video.currentTime = Math.random()*video.duration;
 		}
 		//loop
 		if(video.currentTime == video.duration){
