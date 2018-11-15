@@ -39,66 +39,6 @@
 	</div>
 	<canvas id="display_canvas"></canvas>
 	<script>
-
-		var enter_video = document.getElementById('enter_video');
-		var display_canvas = document.getElementById('display_canvas');
-		var copy_canvas = document.getElementById('copy_canvas');
-		var context = display_canvas.getContext("2d");
-		var copy_context = copy_canvas.getContext("2d");
-		var window_w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth; //浏览器宽
-		var window_h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;//浏览器高
-
-		var video_canvas = {
-			cards: [],
-			slice_number: 20,
-		};
-		function Canvas_tile(){
-			this.wd = 0; // 卡片宽度
-			this.hg = 0; // 卡片高度
-			this.sx = 0; // 相对图像x坐标
-			this.sy = 0; // 相对图像y坐标
-			this.x = 0; // 卡片左上相对画笔原点x坐标位置
-			this.y = 0; // 卡片左上相对画笔原点y坐标位置
-			this.currentx = 0; // 卡片中心点x坐标
-			this.currenty = 0; // 卡片中心点y坐标
-			this.movex = 0; // 卡片在x轴每次移动距离
-			this.movey = 0; // 卡片在y轴每次移动距离
-		}
-		function init(){
-			display_canvas.width = copy_canvas.width = window_w;
-			display_canvas.height = copy_canvas.height = window_h;
-			for(var i = 0; i < video_canvas.slice_number; i++){
-	    		for(var j = 0; j < video_canvas.slice_number; j++){
-	    			var tile = new Canvas_tile();
-	    			tile.wd = display_canvas.width / video_canvas.slice_number;
-	    			tile.hg = display_canvas.height / video_canvas.slice_number;
-	    			tile.sx = tile.wd * i;
-	    			tile.sy = tile.hg * j;
-	    			tile.x = -tile.wd / 2;
-	    			tile.y = tile.hg / 2;
-	    			tile.currentx = tile.sx - tile.wd / 2;
-	    			tile.currenty = tile.sy - tile.hg / 2;
-	    		}
-	    	}
-		}
-		(function() { //设置canvas的宽高
-	    	
-	    			var card = {
-	    				wd: window_w / video_canvas.slice_number,
-	    				hg: window_h / video_canvas.slice_number,
-	    				s_first_x: window_w / video_canvas.slice_number * (i),
-	    				s_first_y: window_h / video_canvas.slice_number * (j),
-	    				d_first_x: window_w / video_canvas.slice_number * (i),
-	    				d_first_y: window_h / video_canvas.slice_number * (j),
-	    				vx: window_w / 2 - window_w / video_canvas.slice_number * (i) - window_w / video_canvas.slice_number /2,
-	    				vy: window_h / 2 - window_h / video_canvas.slice_number * (j) - window_h / video_canvas.slice_number / 2,
-
-
-	    			}
-	    			video_canvas.cards.push(card);
-	    		}
-	    	}
-	    })();
 	    (function setRAF(addition) {
     	    var lastTime = 0;
     	    var vendors = ['webkit', 'moz'];
@@ -125,42 +65,122 @@
     	        };
     	    }
     	})();
+		var enter_video = document.getElementById('enter_video');
+		var display_canvas = document.getElementById('display_canvas');
+		var copy_canvas = document.getElementById('copy_canvas');
+		var context = display_canvas.getContext("2d");
+		var copy_context = copy_canvas.getContext("2d");
+		var window_w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth; //浏览器宽
+		var window_h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;//浏览器高
+
+		var tiles = {
+			cards: [],
+			slice_number: 20,
+		};
+		var RAD = Math.PI/180;
+
+		function Canvas_tile(){
+			this.wd = 0; // 卡片宽度
+			this.hg = 0; // 卡片高度
+			this.sx = 0; // 相对图像x坐标
+			this.sy = 0; // 相对图像y坐标
+			this.x = 0; // 卡片左上相对画笔原点x坐标位置
+			this.y = 0; // 卡片左上相对画笔原点y坐标位置
+			this.currentx = 0; // 卡片中心点x坐标
+			this.currenty = 0; // 卡片中心点y坐标
+			this.movex = 0; // 卡片在x轴每次移动距离
+			this.movey = 0; // 卡片在y轴每次移动距离
+			this.speed = 0; // 卡片每次移动速度
+			this.moveRotation = 0; // 卡片旋转角度
+			this.rotation = 0; // 卡片当前角度
+		}
+		function init(){
+			display_canvas.width = copy_canvas.width = window_w;
+			display_canvas.height = copy_canvas.height = window_h;
+			for(var i = 0; i < tiles.slice_number; i++){
+	    		for(var j = 0; j < tiles.slice_number; j++){
+	    			var tile = new Canvas_tile();
+	    			tile.wd = display_canvas.width / tiles.slice_number;
+	    			tile.hg = display_canvas.height / tiles.slice_number;
+	    			tile.sx = tile.wd * i;
+	    			tile.sy = tile.hg * j;
+	    			tile.x = -tile.wd / 2;
+	    			tile.y = tile.hg / 2;
+	    			tile.currentx = tile.sx - tile.x;
+	    			tile.currenty = tile.sy - tile.y;
+	    			tiles.cards.push(tile);
+	    		}
+	    	}
+		}
     	function drawCanvas(){
     		if(enter_video.currentTime >= 5){
-    			canvasMove();
+    			onceCalculate();
     		}
-
     		copy_context.drawImage(enter_video, 0, 0, copy_canvas.width, copy_canvas.height);
-    		context.clearRect(0, 0, display_canvas.width, display_canvas.height)
-    		for (var i = 0; i < video_canvas.cards.length; i++) {
-    			var s_first_x = video_canvas.cards[i].s_first_x;
-    			var s_first_y = video_canvas.cards[i].s_first_y;
-    			var d_first_x = video_canvas.cards[i].d_first_x;
-    			var d_first_y = video_canvas.cards[i].d_first_y;
-    			var s_wd = video_canvas.cards[i].wd;
-    			var s_hg = video_canvas.cards[i].hg;
-    			context.drawImage(copy_canvas, s_first_x, s_first_y, s_wd, s_hg, d_first_x, d_first_y, s_wd, s_hg);
-
+    		context.clearRect(0, 0, display_canvas.width, display_canvas.height);
+    		moveCanvas();
+    		for (var i = 0; i < tiles.cards.length; i++) {
+    			var tile = tiles.cards[i];
+    			context.save();
+    			context.translate(tile.currentx, tile.currenty);
+    			context.rotate(tile.rotation*RAD);
+    			context.drawImage(copy_canvas, tile.sx, tile.sy, tile.wd, tile.hg, tile.x, tile.y, tile.wd, tile.hg);
+    			context.restore();
     		}
     		if(!enter_video.paused){
 		    	requestAnimationFrame(drawCanvas)
 		    }
     	}
-    	function canvasMove(){
-    		for (var i = 0; i < video_canvas.cards.length; i++) {
-    			var radians = Math.atan2(video_canvas.cards[i].vy, video_canvas.cards[i].vx);
-    			var dist = Math.sqrt(video_canvas.cards[i].vx*video_canvas.cards[i].vx + video_canvas.cards[i].vy*video_canvas.cards[i].vy);
-    			if(Math.cos(radians) < 0){
-    				dist = -dist;
+    	function calculateMove(){
+    		var number = 1;
+    		return function onceCalculate(){
+    			if(number > 0){
+    				var range = Math.sqrt(window_w*window_w + window_h*window_h);
+    				for (var i = 0; i < tiles.cards.length; i++) {
+    					var tile = tiles.cards[i];
+    					var diffx = Math.ceil(tile.currentx - window_w / 2);
+    					var diffy = Math.ceil(tile.currenty - window_h / 2);
+    					var dist = Math.sqrt(diffx*diffx + diffy*diffy);
+    					tile.speed = (range - dist) / range * 1.8;
+    					var angle = Math.atan2(diffy , diffx);
+    					tile.movex = Math.cos(angle);
+    					tile.movey = Math.sin(angle);
+    					tile.moveRotation = 0.5-Math.random();
+    				}
+    				tiles.cards.sort(function(a, b){
+    					return a.speed - b.speed;
+    				})
+    				number--;
+
     			}
-    			dist = 200/dist
-    			video_canvas.cards[i].d_first_x -= (dist + Math.cos(radians)) * 10;
-    			video_canvas.cards[i].d_first_y -= (dist + Math.sin(radians)) * 10;
+    		}
+    	}
+    	function moveCanvas(){
+    		for (var i = 0; i < tiles.cards.length; i++) {
+    			var tile = tiles.cards[i];
+    			if(tile.speed > 0.0000001){
+	    			tile.movex *= tile.speed;
+	    			tile.movey *= tile.speed;
+	    			tile.currentx += tile.movex;
+	    			tile.currenty += tile.movey;
+	    			tile.moveRotation *= tile.speed;
+	    			tile.rotation += (tile.moveRotation) % 360;
+	    			tile.speed *= 0.99;
+
+					// if(tile.currentx < 0 || tile.currentx > window_w){
+					// 	tile.movex *= -1;
+					// }
+					// if(tile.currenty > 0 || tile.currenty < -window_h){
+					// 	tile.movey *= -1;
+					// }
+    			}
     		}
     	}
     	enter_video.addEventListener("play", function(){
     		drawCanvas();
     	})
+    	init();
+    	var onceCalculate = calculateMove();
 	</script>
 </body>
 </html>
