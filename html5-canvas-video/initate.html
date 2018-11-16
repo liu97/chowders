@@ -104,10 +104,10 @@
 	    			tile.hg = display_canvas.height / tiles.slice_number;
 	    			tile.sx = tile.wd * i;
 	    			tile.sy = tile.hg * j;
-	    			tile.x = -tile.wd / 2;
+	    			tile.x = tile.wd / 2;
 	    			tile.y = tile.hg / 2;
-	    			tile.currentx = tile.sx - tile.x;
-	    			tile.currenty = tile.sy - tile.y;
+	    			tile.currentx = tile.sx + tile.x;
+	    			tile.currenty = tile.sy + tile.y;
 	    			tiles.cards.push(tile);
 	    		}
 	    	}
@@ -124,7 +124,7 @@
     			context.save();
     			context.translate(tile.currentx, tile.currenty);
     			context.rotate(tile.rotation*RAD);
-    			context.drawImage(copy_canvas, tile.sx, tile.sy, tile.wd, tile.hg, tile.x, tile.y, tile.wd, tile.hg);
+    			context.drawImage(copy_canvas, tile.sx, tile.sy, tile.wd, tile.hg, -tile.x, -tile.y, tile.wd, tile.hg);
     			context.restore();
     		}
     		if(!enter_video.paused){
@@ -165,7 +165,7 @@
 	    			tile.currenty += tile.movey;
 	    			tile.moveRotation *= tile.speed;
 	    			tile.rotation += (tile.moveRotation) % 360;
-	    			tile.speed *= 0.99;
+	    			tile.speed *= 0.98;
 
 					// if(tile.currentx < 0 || tile.currentx > window_w){
 					// 	tile.movex *= -1;
