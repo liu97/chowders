@@ -131,7 +131,7 @@
 		    	requestAnimationFrame(drawCanvas)
 		    }
     	}
-    	function calculateMove(){
+    	function calculateMove(){ // 计算每个卡片的初始值，例如初始速度等等
     		var number = 1;
     		return function onceCalculate(){
     			if(number > 0){
@@ -141,7 +141,7 @@
     					var diffx = Math.ceil(tile.currentx - window_w / 2);
     					var diffy = Math.ceil(tile.currenty - window_h / 2);
     					var dist = Math.sqrt(diffx*diffx + diffy*diffy);
-    					tile.speed = (range - dist) / range * 1.8;
+    					tile.speed = (range - dist) / range * 1.8; // 离中心点越近速度越大
     					var angle = Math.atan2(diffy , diffx);
     					tile.movex = Math.cos(angle);
     					tile.movey = Math.sin(angle);
@@ -155,7 +155,7 @@
     			}
     		}
     	}
-    	function moveCanvas(){
+    	function moveCanvas(){ //移动卡片
     		for (var i = 0; i < tiles.cards.length; i++) {
     			var tile = tiles.cards[i];
     			if(tile.speed > 0.0000001){
