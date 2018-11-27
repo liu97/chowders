@@ -1,6 +1,5 @@
 import './index.less'
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { CSSTransition } from 'react-transition-group';
 import Animated from 'animated/lib/targets/react-dom';
 
@@ -42,9 +41,11 @@ export default class App extends React.Component{
 				    style={{overflow: 'scroll', height: 102}}
 			        onScroll={Animated.event([
 			          {target: {scrollLeft: this.state.anim}}
-			        ])}>
+			        ])}
+				>
 			        <div style={{width: '10000px', height: 1}} />
 			        {[0, 1, 2, 3, 4].map(i =>
+			          	// eslint-disable-next-line react/jsx-key
 			          	<Animated.div
 				            style={{
 				              left: this.state.anim.interpolate({
@@ -57,7 +58,8 @@ export default class App extends React.Component{
 				              height: '100px',
 				              position: 'absolute',
 				            }}
-				            className="circle">
+				            className="circle"
+			          	>
 				            {i === 4 && 'H-Scroll'}
 			          	</Animated.div>
 			        )}
@@ -81,7 +83,8 @@ export default class App extends React.Component{
 						border: '1px solid #ccc',
 
 					}}
-					onClick={this.anim1Click}>
+					onClick={this.anim1Click}
+				>
 					2
 				</Animated.div>
 			</React.Fragment>
